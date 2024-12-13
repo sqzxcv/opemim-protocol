@@ -138,11 +138,12 @@ message KickGroupMemberResp {
 
 }
 
-
 message GetJoinedGroupListReq {
   openim.sdkws.RequestPagination pagination = 1;
   string fromUserID = 2;
+  int64 lastUpdateTime = 3; // 本地最后更新时间, 0 表示获取全量
 }
+
 message GetJoinedGroupListResp{
   uint32 total = 1;
   repeated  openim.sdkws.GroupInfo groups = 2;
