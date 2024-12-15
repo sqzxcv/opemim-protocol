@@ -147,6 +147,7 @@ message GetJoinedGroupListReq {
 message GetJoinedGroupListResp{
   uint32 total = 1;
   repeated  openim.sdkws.GroupInfo groups = 2;
+  int64 MaxUpdateTime = 3; // 本次获取的最大更新时间
 }
 
 
