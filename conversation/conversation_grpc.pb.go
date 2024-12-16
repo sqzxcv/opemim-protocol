@@ -36,6 +36,7 @@ const (
 	Conversation_GetConversation_FullMethodName                         = "/openim.conversation.conversation/GetConversation"
 	Conversation_GetSortedConversationList_FullMethodName               = "/openim.conversation.conversation/GetSortedConversationList"
 	Conversation_GetAllConversations_FullMethodName                     = "/openim.conversation.conversation/GetAllConversations"
+	Conversation_GetAllConversationsWithIncrement_FullMethodName        = "/openim.conversation.conversation/GetAllConversationsWithIncrement"
 	Conversation_GetConversations_FullMethodName                        = "/openim.conversation.conversation/GetConversations"
 	Conversation_SetConversation_FullMethodName                         = "/openim.conversation.conversation/SetConversation"
 	Conversation_GetRecvMsgNotNotifyUserIDs_FullMethodName              = "/openim.conversation.conversation/GetRecvMsgNotNotifyUserIDs"
@@ -58,6 +59,7 @@ type ConversationClient interface {
 	GetConversation(ctx context.Context, in *GetConversationReq, opts ...grpc.CallOption) (*GetConversationResp, error)
 	GetSortedConversationList(ctx context.Context, in *GetSortedConversationListReq, opts ...grpc.CallOption) (*GetSortedConversationListResp, error)
 	GetAllConversations(ctx context.Context, in *GetAllConversationsReq, opts ...grpc.CallOption) (*GetAllConversationsResp, error)
+	GetAllConversationsWithIncrement(ctx context.Context, in *GetAllConversationsReq, opts ...grpc.CallOption) (*GetAllConversationsResp, error)
 	GetConversations(ctx context.Context, in *GetConversationsReq, opts ...grpc.CallOption) (*GetConversationsResp, error)
 	SetConversation(ctx context.Context, in *SetConversationReq, opts ...grpc.CallOption) (*SetConversationResp, error)
 	GetRecvMsgNotNotifyUserIDs(ctx context.Context, in *GetRecvMsgNotNotifyUserIDsReq, opts ...grpc.CallOption) (*GetRecvMsgNotNotifyUserIDsResp, error)
@@ -102,6 +104,15 @@ func (c *conversationClient) GetSortedConversationList(ctx context.Context, in *
 func (c *conversationClient) GetAllConversations(ctx context.Context, in *GetAllConversationsReq, opts ...grpc.CallOption) (*GetAllConversationsResp, error) {
 	out := new(GetAllConversationsResp)
 	err := c.cc.Invoke(ctx, Conversation_GetAllConversations_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conversationClient) GetAllConversationsWithIncrement(ctx context.Context, in *GetAllConversationsReq, opts ...grpc.CallOption) (*GetAllConversationsResp, error) {
+	out := new(GetAllConversationsResp)
+	err := c.cc.Invoke(ctx, Conversation_GetAllConversationsWithIncrement_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -232,6 +243,7 @@ type ConversationServer interface {
 	GetConversation(context.Context, *GetConversationReq) (*GetConversationResp, error)
 	GetSortedConversationList(context.Context, *GetSortedConversationListReq) (*GetSortedConversationListResp, error)
 	GetAllConversations(context.Context, *GetAllConversationsReq) (*GetAllConversationsResp, error)
+	GetAllConversationsWithIncrement(context.Context, *GetAllConversationsReq) (*GetAllConversationsResp, error)
 	GetConversations(context.Context, *GetConversationsReq) (*GetConversationsResp, error)
 	SetConversation(context.Context, *SetConversationReq) (*SetConversationResp, error)
 	GetRecvMsgNotNotifyUserIDs(context.Context, *GetRecvMsgNotNotifyUserIDsReq) (*GetRecvMsgNotNotifyUserIDsResp, error)
@@ -260,6 +272,9 @@ func (UnimplementedConversationServer) GetSortedConversationList(context.Context
 }
 func (UnimplementedConversationServer) GetAllConversations(context.Context, *GetAllConversationsReq) (*GetAllConversationsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllConversations not implemented")
+}
+func (UnimplementedConversationServer) GetAllConversationsWithIncrement(context.Context, *GetAllConversationsReq) (*GetAllConversationsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllConversationsWithIncrement not implemented")
 }
 func (UnimplementedConversationServer) GetConversations(context.Context, *GetConversationsReq) (*GetConversationsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConversations not implemented")
@@ -363,6 +378,24 @@ func _Conversation_GetAllConversations_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConversationServer).GetAllConversations(ctx, req.(*GetAllConversationsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Conversation_GetAllConversationsWithIncrement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllConversationsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConversationServer).GetAllConversationsWithIncrement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Conversation_GetAllConversationsWithIncrement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConversationServer).GetAllConversationsWithIncrement(ctx, req.(*GetAllConversationsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -619,6 +652,10 @@ var Conversation_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllConversations",
 			Handler:    _Conversation_GetAllConversations_Handler,
+		},
+		{
+			MethodName: "GetAllConversationsWithIncrement",
+			Handler:    _Conversation_GetAllConversationsWithIncrement_Handler,
 		},
 		{
 			MethodName: "GetConversations",

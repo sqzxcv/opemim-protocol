@@ -125,10 +125,12 @@ message GetConversationsResp{
 
 message GetAllConversationsReq{
   string ownerUserID = 1;
+  int64 lastUpdateTime = 3; // 本地最后更新时间, 0 表示获取全量
 }
 
 message GetAllConversationsResp{
   repeated Conversation conversations = 2;
+  int64 MaxUpdateTime = 3; // 本次获取的最大更新时间
 }
 
 
@@ -241,6 +243,7 @@ service conversation {
   rpc GetConversation(GetConversationReq)returns(GetConversationResp);
   rpc GetSortedConversationList(GetSortedConversationListReq)returns(GetSortedConversationListResp);
   rpc GetAllConversations(GetAllConversationsReq)returns(GetAllConversationsResp);
+  rpc GetAllConversationsWithIncrement(GetAllConversationsReq)returns(GetAllConversationsResp); // 增量获取所有会话
   rpc GetConversations(GetConversationsReq)returns(GetConversationsResp);
   rpc SetConversation(SetConversationReq)returns(SetConversationResp);
   rpc GetRecvMsgNotNotifyUserIDs(GetRecvMsgNotNotifyUserIDsReq) returns (GetRecvMsgNotNotifyUserIDsResp);

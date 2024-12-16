@@ -380,6 +380,7 @@ service group{
   rpc kickGroupMember(KickGroupMemberReq) returns (KickGroupMemberResp);
   //获取某个人已加入群
   rpc getJoinedGroupList(GetJoinedGroupListReq) returns (GetJoinedGroupListResp);
+  rpc getJoinedGroupListWithIncrement(GetJoinedGroupListReq) returns (GetJoinedGroupListResp);
   //邀请某些人进群
   rpc inviteUserToGroup(InviteUserToGroupReq) returns (InviteUserToGroupResp);
 

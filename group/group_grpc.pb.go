@@ -47,6 +47,7 @@ const (
 	Group_GetGroupMembersInfo_FullMethodName             = "/openim.group.group/getGroupMembersInfo"
 	Group_KickGroupMember_FullMethodName                 = "/openim.group.group/kickGroupMember"
 	Group_GetJoinedGroupList_FullMethodName              = "/openim.group.group/getJoinedGroupList"
+	Group_GetJoinedGroupListWithIncrement_FullMethodName = "/openim.group.group/getJoinedGroupListWithIncrement"
 	Group_InviteUserToGroup_FullMethodName               = "/openim.group.group/inviteUserToGroup"
 	Group_GetGroups_FullMethodName                       = "/openim.group.group/getGroups"
 	Group_GetGroupMembersCMS_FullMethodName              = "/openim.group.group/getGroupMembersCMS"
@@ -98,6 +99,7 @@ type GroupClient interface {
 	KickGroupMember(ctx context.Context, in *KickGroupMemberReq, opts ...grpc.CallOption) (*KickGroupMemberResp, error)
 	// 获取某个人已加入群
 	GetJoinedGroupList(ctx context.Context, in *GetJoinedGroupListReq, opts ...grpc.CallOption) (*GetJoinedGroupListResp, error)
+	GetJoinedGroupListWithIncrement(ctx context.Context, in *GetJoinedGroupListReq, opts ...grpc.CallOption) (*GetJoinedGroupListResp, error)
 	// 邀请某些人进群
 	InviteUserToGroup(ctx context.Context, in *InviteUserToGroupReq, opts ...grpc.CallOption) (*InviteUserToGroupResp, error)
 	GetGroups(ctx context.Context, in *GetGroupsReq, opts ...grpc.CallOption) (*GetGroupsResp, error)
@@ -256,6 +258,15 @@ func (c *groupClient) KickGroupMember(ctx context.Context, in *KickGroupMemberRe
 func (c *groupClient) GetJoinedGroupList(ctx context.Context, in *GetJoinedGroupListReq, opts ...grpc.CallOption) (*GetJoinedGroupListResp, error) {
 	out := new(GetJoinedGroupListResp)
 	err := c.cc.Invoke(ctx, Group_GetJoinedGroupList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupClient) GetJoinedGroupListWithIncrement(ctx context.Context, in *GetJoinedGroupListReq, opts ...grpc.CallOption) (*GetJoinedGroupListResp, error) {
+	out := new(GetJoinedGroupListResp)
+	err := c.cc.Invoke(ctx, Group_GetJoinedGroupListWithIncrement_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -447,6 +458,7 @@ type GroupServer interface {
 	KickGroupMember(context.Context, *KickGroupMemberReq) (*KickGroupMemberResp, error)
 	// 获取某个人已加入群
 	GetJoinedGroupList(context.Context, *GetJoinedGroupListReq) (*GetJoinedGroupListResp, error)
+	GetJoinedGroupListWithIncrement(context.Context, *GetJoinedGroupListReq) (*GetJoinedGroupListResp, error)
 	// 邀请某些人进群
 	InviteUserToGroup(context.Context, *InviteUserToGroupReq) (*InviteUserToGroupResp, error)
 	GetGroups(context.Context, *GetGroupsReq) (*GetGroupsResp, error)
@@ -523,6 +535,9 @@ func (UnimplementedGroupServer) KickGroupMember(context.Context, *KickGroupMembe
 }
 func (UnimplementedGroupServer) GetJoinedGroupList(context.Context, *GetJoinedGroupListReq) (*GetJoinedGroupListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetJoinedGroupList not implemented")
+}
+func (UnimplementedGroupServer) GetJoinedGroupListWithIncrement(context.Context, *GetJoinedGroupListReq) (*GetJoinedGroupListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJoinedGroupListWithIncrement not implemented")
 }
 func (UnimplementedGroupServer) InviteUserToGroup(context.Context, *InviteUserToGroupReq) (*InviteUserToGroupResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteUserToGroup not implemented")
@@ -836,6 +851,24 @@ func _Group_GetJoinedGroupList_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServer).GetJoinedGroupList(ctx, req.(*GetJoinedGroupListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Group_GetJoinedGroupListWithIncrement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJoinedGroupListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServer).GetJoinedGroupListWithIncrement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Group_GetJoinedGroupListWithIncrement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServer).GetJoinedGroupListWithIncrement(ctx, req.(*GetJoinedGroupListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1208,6 +1241,10 @@ var Group_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getJoinedGroupList",
 			Handler:    _Group_GetJoinedGroupList_Handler,
+		},
+		{
+			MethodName: "getJoinedGroupListWithIncrement",
+			Handler:    _Group_GetJoinedGroupListWithIncrement_Handler,
 		},
 		{
 			MethodName: "inviteUserToGroup",
