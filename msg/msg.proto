@@ -203,17 +203,25 @@ message GetConversationMaxSeqResp {
 message GetConversationsHasReadAndMaxSeqReq {
   string userID = 1;
   repeated string conversationIDs = 2;
-  int64 lastUpdateAt = 3;
+  int64 hasReadSeqsLastUpdateAt = 3;
+  int64 maxSeqsLastUpdateAt = 4;
 }
 
 message Seqs {
   int64 maxSeq = 1;
   int64 hasReadSeq = 2;
-  int64 updateAt = 3;// 去两个更新时间最大值
+}
+
+message SeqWithUpdateAt {
+  int64 seq = 1;
+  int64 updateAt = 2;
 }
 
 message GetConversationsHasReadAndMaxSeqResp {
   map<string, Seqs> seqs = 1;
+  map<string, SeqWithUpdateAt> hasReadSeqs = 2;
+  map<string, SeqWithUpdateAt> maxSeqs = 3;
+
 }
 
 message GetActiveUserReq {
