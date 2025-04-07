@@ -205,6 +205,7 @@ message GetConversationsHasReadAndMaxSeqReq {
   repeated string conversationIDs = 2;
   int64 hasReadSeqsLastUpdateAt = 3;
   int64 maxSeqsLastUpdateAt = 4;
+  bool increment = 5; // 是否增量获取数据,如果是, 则只获取hasReadSeqs和maxSeqs中比传入的时间戳大的数据
 }
 
 message Seqs {
